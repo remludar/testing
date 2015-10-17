@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicTexture", "BasicTexture\BasicTexture.csproj", "{FDD7D7CD-4DED-4527-95D0-53D804E8D480}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicCamera", "BasicCamera\BasicCamera.csproj", "{14DE52CF-F302-40CA-8359-3A5963B05FBD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{FDD7D7CD-4DED-4527-95D0-53D804E8D480}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FDD7D7CD-4DED-4527-95D0-53D804E8D480}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FDD7D7CD-4DED-4527-95D0-53D804E8D480}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14DE52CF-F302-40CA-8359-3A5963B05FBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14DE52CF-F302-40CA-8359-3A5963B05FBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14DE52CF-F302-40CA-8359-3A5963B05FBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14DE52CF-F302-40CA-8359-3A5963B05FBD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
