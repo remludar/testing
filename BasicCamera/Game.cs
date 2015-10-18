@@ -99,8 +99,8 @@ namespace BasicCamera
         private void _LoadShaders()
         {
             shaderProgramID = GL.CreateProgram();
-            _CreateShader("vs.glsl", ShaderType.VertexShader, out vertShaderID);
-            _CreateShader("fs.glsl", ShaderType.FragmentShader, out fragShaderID);
+            _CreateShader(@"Content\Shaders\vs.glsl", ShaderType.VertexShader, out vertShaderID);
+            _CreateShader(@"Content\Shaders\fs.glsl", ShaderType.FragmentShader, out fragShaderID);
             GL.AttachShader(shaderProgramID, vertShaderID);
             GL.AttachShader(shaderProgramID, fragShaderID);
             GL.LinkProgram(shaderProgramID);
@@ -144,7 +144,7 @@ namespace BasicCamera
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
 
-            Bitmap bmp = new Bitmap("faithful.png");
+            Bitmap bmp = new Bitmap(@"Content\Textures\faithful.png");
             BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
             GL.TexImage2D(TextureTarget.Texture2D, 
