@@ -11,31 +11,40 @@ using System.Drawing.Imaging;
 using System.IO;
 using OpenTK.Input;
 
-namespace BasicTexture
+namespace BasicCamera
 {
     class Game : GameWindow
     {
         float[] vertData;
+        Matrix4[] modelViewData;
         int shaderProgramID, vertShaderID, fragShaderID, textureID;
         int positionAttrib, colorAttrib, textureAttrib;
+        int modelViewUniform;
         int vertexVBO;
+
+        Camera cam = new Camera();
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
             Title = "Basic Tests";
             GL.ClearColor(Color.CornflowerBlue);
-            
+            GL.Viewport(0, 0, ClientRectangle.Width, ClientRectangle.Height);
+
             _LoadData();
             _LoadShaders();
             _LoadTexture();
-            _LoadBuffers();
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
 
+            _GetViewMatrix();
+
+            _LoadBuffers();
+            _LoadUniforms();
+            
             _ProcessInput();
         }
 
@@ -44,7 +53,6 @@ namespace BasicTexture
             base.OnRenderFrame(e);
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
-
             _DrawTriangles();
 
             SwapBuffers();
@@ -55,19 +63,36 @@ namespace BasicTexture
             var keyboardState = OpenTK.Input.Keyboard.GetState();
             if (keyboardState[Key.Escape])
                 Exit();
+            if(keyboardState[Key.D])
+                cam.Move(0.1f, 0f);
+            if(keyboardState[Key.A])
+                cam.Move(-0.1f, 0f);
+            if(keyboardState[Key.W])
+                cam.Move(0f, 0.1f);
+            if (keyboardState[Key.S])
+                cam.Move(0f, -0.1f);
+            if (keyboardState[Key.Q])
+            {
+                modelViewData[0][3, 0] = 1;
+                Console.WriteLine(modelViewData[0][3,0]+"\n");
+            }
         }
 
         private void _LoadData()
         {
             vertData = new float[]{
                     //Position                  //Color                //UV
-                -0.5f, -0.5f, 0.0f,     0.3f, 0.0f, 0.0f, 1.0f,     1.0f, 1.0f,
-                -0.5f, +0.5f, 0.0f,     0.6f, 0.0f, 0.0f, 1.0f,     1.0f ,0.0f,
-                +0.5f, +0.5f, 0.0f,     0.9f, 0.0f, 0.0f, 1.0f,     0.0f, 0.0f,
+                -0.5f, -0.5f, 0.0f,     1.0f, 1.0f, 1.0f, 1.0f,     1.0f, 1.0f,
+                -0.5f, +0.5f, 0.0f,     1.0f, 1.0f, 1.0f, 1.0f,     1.0f ,0.0f,
+                +0.5f, +0.5f, 0.0f,     1.0f, 1.0f, 1.0f, 1.0f,     0.0f, 0.0f,
+                                                              
+                +0.5f, +0.5f, 0.0f,     1.0f, 1.0f, 1.0f, 1.0f,     0.0f, 0.0f,
+                +0.5f, -0.5f, 0.0f,     1.0f, 1.0f, 1.0f, 1.0f,     0.0f, 1.0f,
+                -0.5f, -0.5f, 0.0f,     1.0f, 1.0f, 1.0f, 1.0f,     1.0f, 1.0f,
+            };
 
-                +0.5f, +0.5f, 0.0f,     0.0f, 0.9f, 0.0f, 1.0f,     0.0f, 0.0f,
-                +0.5f, -0.5f, 0.0f,     0.0f, 0.6f, 0.0f, 1.0f,     0.0f, 1.0f,
-                -0.5f, -0.5f, 0.0f,     0.0f, 0.3f, 0.0f, 1.0f,     1.0f, 1.0f,
+            modelViewData = new Matrix4[]{
+                Matrix4.Identity
             };
         }
 
@@ -84,6 +109,19 @@ namespace BasicTexture
             positionAttrib = GL.GetAttribLocation(shaderProgramID, "position");
             colorAttrib = GL.GetAttribLocation(shaderProgramID, "color");
             textureAttrib = GL.GetAttribLocation(shaderProgramID, "texture");
+            modelViewUniform = GL.GetUniformLocation(shaderProgramID, "modelView");
+
+            
+
+            if(positionAttrib == -1 || colorAttrib == -1 || textureAttrib == -1 || modelViewUniform == -1)
+            {
+                Console.WriteLine("Error binding attributes");
+                Console.WriteLine("positionAttrib: " + positionAttrib);
+                Console.WriteLine("colorAttrib: " + colorAttrib);
+                Console.WriteLine("textureAttrib: " + textureAttrib);
+                Console.WriteLine("modelView: " + modelViewUniform);
+            }
+                
 
         }
 
@@ -124,6 +162,8 @@ namespace BasicTexture
 
         private void _LoadBuffers()
         {
+            
+
             GL.GenBuffers(1, out vertexVBO);
             GL.BindBuffer(BufferTarget.ArrayBuffer, vertexVBO);
 
@@ -132,8 +172,23 @@ namespace BasicTexture
             GL.VertexAttribPointer(colorAttrib, 4, VertexAttribPointerType.Float, false, sizeof(float) * 9, 3 * sizeof(float));
             GL.VertexAttribPointer(textureAttrib, 2, VertexAttribPointerType.Float, false, sizeof(float) * 9, 7 * sizeof(float));
 
+            
+
             GL.UseProgram(shaderProgramID);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
+            
+        }
+
+        private void _LoadUniforms()
+        {
+            GL.UniformMatrix4(modelViewUniform, false, ref modelViewData[0]);
+        }
+
+        private void _GetViewMatrix()
+        {
+            modelViewData[0] = cam.GetViewMatrix();
+            modelViewData[0][3, 3] = 5;
         }
 
         private void _DrawTriangles()

@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BasicTexture
-{
+namespace BasicCamera
+{ 
     class Program
     {
         static void Main(string[] args)
