@@ -38,19 +38,6 @@ namespace BasicMapGeneration
                                   
                 retVal[7 + i * 9] = verts[i].uv.u;
                 retVal[8 + i * 9] = verts[i].uv.v;
-
-                Console.WriteLine(0 + i * 9);
-                Console.WriteLine(1 + i * 9);
-                Console.WriteLine(2 + i * 9);
-                                          
-                Console.WriteLine(3 + i * 9);
-                Console.WriteLine(4 + i * 9);
-                Console.WriteLine(5 + i * 9);
-                Console.WriteLine(6 + i * 9);
-                                          
-                Console.WriteLine(7 + i * 9);
-                Console.WriteLine(8 + i * 9);
-
             }
 
             return retVal;

@@ -83,12 +83,8 @@ namespace BasicMapGeneration
 
         private void _LoadData()
         {
-            vertData = map.GetData();
-
-            indexData = new int[]{
-                0, 1, 2,
-                2, 3, 0
-            };
+            vertData = map.GetVertexData();
+            indexData = map.GetIndexData();
 
             modelViewData = new Matrix4[]{
                 Matrix4.Identity

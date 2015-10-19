@@ -10,33 +10,53 @@ namespace BasicMapGeneration
 {
     class Map
     {
-        const int WIDTH = 1;
-        const int HEIGHT = 1;
+        const int WIDTH = 5;
+        const int HEIGHT = 5;
 
         Tile[] tiles = new Tile[WIDTH * HEIGHT];
-        float[] data = new float[36 * (WIDTH * HEIGHT)];
+        float[] vertData = new float[36 * (WIDTH * HEIGHT)];
+        int[] indexData = new int[6 * (WIDTH * HEIGHT)];
 
         public Map()
         {
-            for (int i = 0; i < tiles.Length; i++)
+            for (int col = 0; col < HEIGHT; col++)
             {
-                tiles[i] = new Tile(0, 0); // TODO: hard coded to 0,0 temporarily. future will need to represent world x,y coords
+                for (int row = 0; row < WIDTH; row++)
+                {
+                    tiles[row + col * WIDTH] = new Tile(row, col);
+                }
             }
 
-            _ConvertToFloats();
+            _ConvertVertexDataToFloats();
         }
 
-        private void _ConvertToFloats()
+        private void _ConvertVertexDataToFloats()
         {
+            var vertexDataBuffer = new float[36];
             for (int i = 0; i < tiles.Length; i++)
             {
-                data = tiles[i].GetFloats();
+                vertexDataBuffer = tiles[i].GetFloats();
+                vertexDataBuffer.CopyTo(vertData, i * 36);
+
+                indexData[i * 6 + 0] = i * 4 + 0;
+                indexData[i * 6 + 1] = i * 4 + 1;
+                indexData[i * 6 + 2] = i * 4 + 2;
+                indexData[i * 6 + 3] = i * 4 + 2;
+                indexData[i * 6 + 4] = i * 4 + 3;
+                indexData[i * 6 + 5] = i * 4 + 0;
             }
         }
 
-        public float[] GetData()
+
+
+        public float[] GetVertexData()
         {
-            return data;
+            return vertData; 
+        }
+
+        public int[] GetIndexData()
+        {
+            return indexData;
         }
 
         public int GetTileCount()
