@@ -81,17 +81,7 @@ namespace BasicMapGeneration
 
         private void _LoadData()
         {
-            vertData = new float[]{
-                    //Position                  //Color                //UV
-                -0.5f, -0.5f, 0.0f,     1.0f, 1.0f, 1.0f, 1.0f,     1.0f, 1.0f,
-                -0.5f, +0.5f, 0.0f,     1.0f, 1.0f, 1.0f, 1.0f,     1.0f ,0.0f,
-                +0.5f, +0.5f, 0.0f,     1.0f, 1.0f, 1.0f, 1.0f,     0.0f, 0.0f,
-                                                              
-                +0.5f, +0.5f, 0.0f,     1.0f, 1.0f, 1.0f, 1.0f,     0.0f, 0.0f,
-                +0.5f, -0.5f, 0.0f,     1.0f, 1.0f, 1.0f, 1.0f,     0.0f, 1.0f,
-                -0.5f, -0.5f, 0.0f,     1.0f, 1.0f, 1.0f, 1.0f,     1.0f, 1.0f,
-            };
-
+            vertData = new float[270];
             vertData = map.GetMap();
 
             modelViewData = new Matrix4[]{
@@ -201,7 +191,7 @@ namespace BasicMapGeneration
             GL.EnableVertexAttribArray(positionAttrib);
             GL.EnableVertexAttribArray(colorAttrib);
             GL.EnableVertexAttribArray(textureAttrib);
-            GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
+            GL.DrawArrays(PrimitiveType.Triangles, 0, 30);
             GL.DisableVertexAttribArray(positionAttrib);
             GL.DisableVertexAttribArray(colorAttrib);
             GL.DisableVertexAttribArray(textureAttrib);
