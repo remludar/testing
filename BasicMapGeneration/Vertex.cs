@@ -13,7 +13,7 @@ namespace BasicMapGeneration
 
         public struct Position
         {
-            public float x, y;
+            public float x, y, z;
         }
 
         public struct Color
@@ -24,6 +24,11 @@ namespace BasicMapGeneration
         public struct UV
         {
             public float u, v;
+            public void SetUV(float newU, float newV)
+            {
+                u = newU;
+                v = newV;
+            }
         }
 
         public Position pos;
@@ -34,6 +39,7 @@ namespace BasicMapGeneration
         {
             pos.x = newX;
             pos.y = newY;
+            pos.z = 0;
 
             col.r = 1.0f;
             col.g = 1.0f;

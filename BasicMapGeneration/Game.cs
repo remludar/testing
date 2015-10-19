@@ -83,12 +83,7 @@ namespace BasicMapGeneration
 
         private void _LoadData()
         {
-            vertData = new float[]{
-                +0.0f, +0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-                +0.0f, +1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
-                +1.0f, +1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-                +1.0f, +0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
-            };
+            vertData = map.GetData();
 
             indexData = new int[]{
                 0, 1, 2,
