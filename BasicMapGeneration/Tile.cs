@@ -13,13 +13,14 @@ namespace BasicMapGeneration
 
         public Vertex[] verts = new Vertex[6];
 
-        public Tile(Vector3[] pos, Vector4[] col, Vector2[] uv)
+        public Tile(float x, float y)
         {
-            for (int i = 0; i < 6; i++)
-            {
-                verts[i] = new Vertex(pos[i], col[i], uv[i]);
-            }
-            
+            verts[0] = new Vertex(x, y);
+            verts[1] = new Vertex(x, y + 1);
+            verts[2] = new Vertex(x + 1, y + 1);
+            verts[3] = new Vertex(x + 1, y + 1);
+            verts[4] = new Vertex(x + 1, y);
+            verts[5] = new Vertex(x, y);
         }
     }
 }

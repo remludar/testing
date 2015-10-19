@@ -11,16 +11,34 @@ namespace BasicMapGeneration
     class Vertex
     {
 
-        public Vector3 position;
-        public Vector4 color;
-        public Vector2 uv;
-
-        public Vertex(Vector3 p, Vector4 c, Vector2 u)
+        public struct Position
         {
-            position = p;
-            color = c;
-            uv = u;
+            public float x, y;
         }
 
+        public struct Color
+        {
+            public float r, g, b, a;
+        }
+
+        public struct UV
+        {
+            public float u, v;
+        }
+
+        public Position pos;
+        public Color col;
+        public UV uv;
+
+        public Vertex(float newX, float newY)
+        {
+            pos.x = newX;
+            pos.y = newY;
+
+            col.r = 1.0f;
+            col.g = 1.0f;
+            col.b = 1.0f;
+            col.a = 1.0f;
+        }
     }
 }

@@ -16,11 +16,13 @@ namespace BasicMapGeneration
     class Game : GameWindow
     {
         float[] vertData;
+        int[] indexData;
         Matrix4[] modelViewData;
         int shaderProgramID, vertShaderID, fragShaderID, textureID;
         int positionAttrib, colorAttrib, textureAttrib;
         int modelViewUniform;
         int vertexVBO;
+        int indexVBO;
 
         Camera cam = new Camera();
         Map map = new Map();
@@ -81,8 +83,17 @@ namespace BasicMapGeneration
 
         private void _LoadData()
         {
-            vertData = new float[270];
-            vertData = map.GetMap();
+            vertData = new float[]{
+                +0.0f, +0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+                +0.0f, +1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+                +1.0f, +1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+                +1.0f, +0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+            };
+
+            indexData = new int[]{
+                0, 1, 2,
+                2, 3, 0
+            };
 
             modelViewData = new Matrix4[]{
                 Matrix4.Identity
@@ -167,10 +178,14 @@ namespace BasicMapGeneration
             GL.VertexAttribPointer(colorAttrib, 4, VertexAttribPointerType.Float, false, sizeof(float) * 9, 3 * sizeof(float));
             GL.VertexAttribPointer(textureAttrib, 2, VertexAttribPointerType.Float, false, sizeof(float) * 9, 7 * sizeof(float));
 
+            GL.GenBuffers(1, out indexVBO);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexVBO);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indexData.Length * sizeof(float)), indexData, BufferUsageHint.StaticDraw);
             
 
             GL.UseProgram(shaderProgramID);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
 
             
         }
@@ -191,7 +206,8 @@ namespace BasicMapGeneration
             GL.EnableVertexAttribArray(positionAttrib);
             GL.EnableVertexAttribArray(colorAttrib);
             GL.EnableVertexAttribArray(textureAttrib);
-            GL.DrawArrays(PrimitiveType.Triangles, 0, 30);
+            //GL.DrawArrays(PrimitiveType.Triangles, 0, 30);
+            GL.DrawElements(PrimitiveType.Triangles, indexData.Length, DrawElementsType.UnsignedInt, indexData);
             GL.DisableVertexAttribArray(positionAttrib);
             GL.DisableVertexAttribArray(colorAttrib);
             GL.DisableVertexAttribArray(textureAttrib);
