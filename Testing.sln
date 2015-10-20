@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicCamera", "BasicCamera\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicMapGeneration", "BasicMapGeneration\BasicMapGeneration.csproj", "{55C4F788-0A45-482A-8CF4-C67F79E1E3F4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScratchPad", "ScratchPad\ScratchPad.csproj", "{334653C9-8A7F-45EE-933C-6B57AF7C3953}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{55C4F788-0A45-482A-8CF4-C67F79E1E3F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55C4F788-0A45-482A-8CF4-C67F79E1E3F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55C4F788-0A45-482A-8CF4-C67F79E1E3F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{334653C9-8A7F-45EE-933C-6B57AF7C3953}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{334653C9-8A7F-45EE-933C-6B57AF7C3953}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{334653C9-8A7F-45EE-933C-6B57AF7C3953}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{334653C9-8A7F-45EE-933C-6B57AF7C3953}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

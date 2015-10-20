@@ -24,6 +24,9 @@ namespace BasicMapGeneration
         int vertexVBO;
         int indexVBO;
 
+        Bitmap bmp;
+        BitmapData bmpData;
+
         Camera cam = new Camera();
         Map map = new Map();
 
@@ -36,7 +39,7 @@ namespace BasicMapGeneration
 
             _LoadData();
             _LoadShaders();
-            _LoadTexture();
+            _LoadTextures();
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)
@@ -44,18 +47,18 @@ namespace BasicMapGeneration
             base.OnUpdateFrame(e);
 
             _GetViewMatrix();
+            _LoadUniforms();
 
             _LoadBuffers();
-            _LoadUniforms();
-            
+
             _ProcessInput();
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
-
             GL.Clear(ClearBufferMask.ColorBufferBit);
+
             _DrawTriangles();
 
             SwapBuffers();
@@ -91,8 +94,6 @@ namespace BasicMapGeneration
             };
         }
 
-
-
         private void _LoadShaders()
         {
             shaderProgramID = GL.CreateProgram();
@@ -108,8 +109,6 @@ namespace BasicMapGeneration
             textureAttrib = GL.GetAttribLocation(shaderProgramID, "texture");
             modelViewUniform = GL.GetUniformLocation(shaderProgramID, "modelView");
 
-            
-
             if(positionAttrib == -1 || colorAttrib == -1 || textureAttrib == -1 || modelViewUniform == -1)
             {
                 Console.WriteLine("Error binding attributes");
@@ -118,8 +117,6 @@ namespace BasicMapGeneration
                 Console.WriteLine("textureAttrib: " + textureAttrib);
                 Console.WriteLine("modelView: " + modelViewUniform);
             }
-                
-
         }
 
         private void _CreateShader(string filePath, ShaderType type, out int id)
@@ -133,7 +130,7 @@ namespace BasicMapGeneration
             Console.WriteLine(GL.GetShaderInfoLog(id));
         }
 
-        private void _LoadTexture()
+        private void _LoadTextures()
         {
             textureID = GL.GenTexture();
             GL.BindTexture(TextureTarget.Texture2D, textureID);
@@ -141,26 +138,24 @@ namespace BasicMapGeneration
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
 
-            Bitmap bmp = new Bitmap(@"Content\Textures\faithful.png");
-            BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            bmp = new Bitmap(@"Content\Textures\floor.png");
+            bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
-            GL.TexImage2D(TextureTarget.Texture2D, 
-                0, 
-                PixelInternalFormat.Rgba, 
-                bmpData.Width, 
-                bmpData.Height, 
-                0, 
-                OpenTK.Graphics.OpenGL.PixelFormat.Bgra, 
-                PixelType.UnsignedByte, 
-                bmpData.Scan0);
-             
+            GL.TexImage2D(TextureTarget.Texture2D,
+               0,
+               PixelInternalFormat.Rgba,
+               bmpData.Width,
+               bmpData.Height,
+               0,
+               OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
+               PixelType.UnsignedByte,
+               bmpData.Scan0);
+
             bmp.UnlockBits(bmpData);
         }
 
         private void _LoadBuffers()
         {
-            
-
             GL.GenBuffers(1, out vertexVBO);
             GL.BindBuffer(BufferTarget.ArrayBuffer, vertexVBO);
 
@@ -172,13 +167,10 @@ namespace BasicMapGeneration
             GL.GenBuffers(1, out indexVBO);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexVBO);
             GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indexData.Length * sizeof(float)), indexData, BufferUsageHint.StaticDraw);
-            
 
             GL.UseProgram(shaderProgramID);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
-
-            
         }
 
         private void _LoadUniforms()
@@ -189,7 +181,7 @@ namespace BasicMapGeneration
         private void _GetViewMatrix()
         {
             modelViewData[0] = cam.GetViewMatrix();
-            modelViewData[0][3, 3] = 5;
+            modelViewData[0][3, 3] = 3;
         }
 
         private void _DrawTriangles()
@@ -197,8 +189,9 @@ namespace BasicMapGeneration
             GL.EnableVertexAttribArray(positionAttrib);
             GL.EnableVertexAttribArray(colorAttrib);
             GL.EnableVertexAttribArray(textureAttrib);
-            //GL.DrawArrays(PrimitiveType.Triangles, 0, 30);
+
             GL.DrawElements(PrimitiveType.Triangles, indexData.Length, DrawElementsType.UnsignedInt, indexData);
+
             GL.DisableVertexAttribArray(positionAttrib);
             GL.DisableVertexAttribArray(colorAttrib);
             GL.DisableVertexAttribArray(textureAttrib);

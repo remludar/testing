@@ -10,7 +10,7 @@ namespace BasicMapGeneration
 {
     class Map
     {
-        const int WIDTH = 5;
+        const int WIDTH = 20;
         const int HEIGHT = 5;
 
         Tile[] tiles = new Tile[WIDTH * HEIGHT];
