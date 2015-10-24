@@ -5,15 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 
 using OpenTK;
-using OpenTK.Input;
 using OpenTK.Graphics.OpenGL;
-using System.IO;
-
 using System.Drawing;
+using OpenTK.Input;
 
 namespace ScratchPad
 {
-    class ScratchPad : GameWindow
+    class ScratchPad2 : GameWindow
     {
         int program;
         int vao, vbo1, vbo2;
@@ -28,7 +26,7 @@ namespace ScratchPad
 
             GL.GenBuffers(1, out vao);
             GL.BindVertexArray(vao);
-
+           
             GL.GenBuffers(1, out vbo1);
             vertexData1 = new float[]{
                 -1.0f, -0.5f, 0.0f, 0.0f,
@@ -56,8 +54,8 @@ namespace ScratchPad
                 2,3,0
             };
 
-
-
+            
+           
             Utilities.ShaderLoader.LoadShaders(out program, "vs.glsl", "fs.glsl");
 
         }
@@ -97,12 +95,13 @@ namespace ScratchPad
             GL.DisableVertexAttribArray(0);
             GL.DisableVertexAttribArray(1);
         }
-
+        
         private void _ProcessInput()
         {
             var keyboardState = OpenTK.Input.Keyboard.GetState();
             if (keyboardState[Key.Escape])
-                Exit();
+                Exit(); 
         }
+
     }
 }
