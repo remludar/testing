@@ -16,10 +16,9 @@ namespace ScratchPad
     class ScratchPad : GameWindow
     {
         int program;
-        int vao, vbo1, vbo2;
+        int vao, vbo1;
         int floorTexID, wallTexID;
-        float[] vertexData1, vertexData2;
-        int[] indexData1, indexData2;
+        float[] vertexData;
 
         protected override void OnLoad(EventArgs e)
         {
@@ -30,33 +29,36 @@ namespace ScratchPad
             GL.BindVertexArray(vao);
 
             GL.GenBuffers(1, out vbo1);
-            vertexData1 = new float[]{
-                -1.0f, -0.5f, 0.0f, 0.0f,
-                +0.0f, -0.5f, 1.0f, 0.0f,
-                +0.0f, +0.5f, 1.0f, 1.0f,
-                -1.0f, +0.5f, 0.0f, 1.0f
+            vertexData = new float[]{
+                -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+                +0.0f, -1.0f, 1.0f, 0.0f, 0.0f,
+                +0.0f, +0.0f, 1.0f, 1.0f, 0.0f,
+                +0.0f, +0.0f, 1.0f, 1.0f, 0.0f,
+                -1.0f, +0.0f, 0.0f, 1.0f, 0.0f,
+                -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+
+                +0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+                +1.0f, -1.0f, 1.0f, 0.0f, 0.0f,
+                +1.0f, +0.0f, 1.0f, 1.0f, 0.0f,
+                +1.0f, +0.0f, 1.0f, 1.0f, 0.0f,
+                +0.0f, +0.0f, 0.0f, 1.0f, 0.0f,
+                +0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+
+                +0.0f, +0.0f, 0.0f, 0.0f, 1.0f,
+                +1.0f, +0.0f, 1.0f, 0.0f, 1.0f,
+                +1.0f, +1.0f, 1.0f, 1.0f, 1.0f,
+                +1.0f, +1.0f, 1.0f, 1.0f, 1.0f,
+                +0.0f, +1.0f, 0.0f, 1.0f, 1.0f,
+                +0.0f, +0.0f, 0.0f, 0.0f, 1.0f,
+
+                -1.0f, +0.0f, 0.0f, 0.0f, 1.0f,
+                +0.0f, +0.0f, 1.0f, 0.0f, 1.0f,
+                +0.0f, +1.0f, 1.0f, 1.0f, 1.0f,
+                +0.0f, +1.0f, 1.0f, 1.0f, 1.0f,
+                -1.0f, +1.0f, 0.0f, 1.0f, 1.0f,
+                -1.0f, +0.0f, 0.0f, 0.0f, 1.0f,
+
             };
-
-            indexData1 = new int[]{
-                0,1,2,
-                2,3,0
-            };
-
-            GL.GenBuffers(1, out vbo2);
-            vertexData2 = new float[]{
-                +0.0f, -0.5f, 0.0f, 0.0f,
-                +1.0f, -0.5f, 1.0f, 0.0f,
-                +1.0f, +0.5f, 1.0f, 1.0f,
-                +0.0f, +0.5f, 0.0f, 1.0f
-
-            };
-
-            indexData2 = new int[]{
-                0,1,2,
-                2,3,0
-            };
-
-
 
             Utilities.ShaderLoader.LoadShaders(out program, "vs.glsl", "fs.glsl");
 
@@ -73,25 +75,36 @@ namespace ScratchPad
             base.OnRenderFrame(e);
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            Utilities.TextureLoader.LoadTextures(out floorTexID, "floor.png");
-            _Draw(vbo1, vertexData1, indexData1);
-            Utilities.TextureLoader.LoadTextures(out wallTexID, "wall.jpg");
-            _Draw(vbo2, vertexData2, indexData2);
+            int lastTileDrawn = 0;
+            for (int i = 4; i < 30 * 4; i += 30)
+            {
+                if (vertexData[i] == 0)
+                {
+                    Utilities.TextureLoader.LoadTextures(out floorTexID, "floor.png");
+                }
+                else
+                {
+                    Utilities.TextureLoader.LoadTextures(out wallTexID, "wall.jpg");
+                }
+                _Draw(vbo1, vertexData, lastTileDrawn);
+                lastTileDrawn++;
+
+            }
 
             GL.Flush();
             SwapBuffers();
         }
 
-        private void _Draw(int vbo, float[] vertexData, int[] indexData)
+        private void _Draw(int vbo, float[] vertexData, int tileCount)
         {
             GL.EnableVertexAttribArray(0);
             GL.EnableVertexAttribArray(1);
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(vertexData1.Length * sizeof(float)), vertexData, BufferUsageHint.StaticDraw);
-            GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 4 * sizeof(float), 0);
-            GL.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 4 * sizeof(float), 2 * sizeof(float));
-            GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, indexData);
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(vertexData.Length * sizeof(float)), vertexData, BufferUsageHint.StaticDraw);
+            GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
+            GL.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 2 * sizeof(float));
+            GL.DrawArrays(PrimitiveType.Triangles, tileCount * 6, 6);            
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
             GL.DisableVertexAttribArray(0);
