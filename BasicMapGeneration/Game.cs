@@ -19,13 +19,13 @@ namespace BasicMapGeneration
         int[] indexData;
         Matrix4[] modelViewData;
         int shaderProgramID;
-        int modelViewUniform;
+        int modelViewUniformLocation;
         int vao;
         int vertexVBO;
         int floorTexID, wallTexID;
 
-        Bitmap bmp;
-        BitmapData bmpData;
+        Bitmap floorBMP, wallBMP;
+        BitmapData floorBMPData, wallBMPData;
 
         Camera cam = new Camera();
         Map map = new Map();
@@ -41,7 +41,9 @@ namespace BasicMapGeneration
             GL.BindVertexArray(vao);
 
             _LoadData();
+            _LoadTextures();
             Utilities.ShaderLoader.LoadShaders(out shaderProgramID, @"Content\Shaders\vs.glsl", @"Content\Shaders\fs.glsl");
+            modelViewUniformLocation = GL.GetUniformLocation(shaderProgramID, "modelView");
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)
@@ -63,17 +65,39 @@ namespace BasicMapGeneration
             {
                 if (vertData[i] == 0)
                 {
-                    Utilities.TextureLoader.LoadTextures(out floorTexID, @"Content\Textures\floor.png");
+                    GL.TexImage2D(TextureTarget.Texture2D,
+                       0,
+                       PixelInternalFormat.Rgba,
+                       floorBMPData.Width,
+                       floorBMPData.Height,
+                       0,
+                       OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
+                       PixelType.UnsignedByte,
+                       floorBMPData.Scan0);
                 }
                 else
                 {
-                    Utilities.TextureLoader.LoadTextures(out wallTexID, @"Content\Textures\wall.jpg");
+                    GL.TexImage2D(TextureTarget.Texture2D,
+                       0,
+                       PixelInternalFormat.Rgba,
+                       wallBMPData.Width,
+                       wallBMPData.Height,
+                       0,
+                       OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
+                       PixelType.UnsignedByte,
+                       wallBMPData.Scan0);
                 }
                 _DrawTriangles(vertexVBO, vertData, lastTileDrawn);
                 lastTileDrawn++;
             }
             GL.Flush();
             SwapBuffers();
+        }
+
+        private void _LoadTextures()
+        {
+            Utilities.TextureLoader.LoadTextures(out floorTexID, @"Content\Textures\floor.png", out floorBMP, out floorBMPData);
+            Utilities.TextureLoader.LoadTextures(out wallTexID, @"Content\Textures\wall.jpg", out wallBMP, out wallBMPData);
         }
 
         private void _ProcessInput()
@@ -111,7 +135,7 @@ namespace BasicMapGeneration
 
         private void _LoadUniforms()
         {
-            GL.UniformMatrix4(modelViewUniform, false, ref modelViewData[0]);
+            GL.UniformMatrix4(modelViewUniformLocation, false, ref modelViewData[0]);
         }
 
         private void _GetViewMatrix()
