@@ -10,6 +10,7 @@ using OpenTK.Graphics.OpenGL;
 using System.IO;
 
 using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace ScratchPad
 {
@@ -19,6 +20,9 @@ namespace ScratchPad
         int vao, vbo1;
         int floorTexID, wallTexID;
         float[] vertexData;
+        int[] indexData;
+        Bitmap floorBMP, wallBMP;
+        BitmapData floorBMPData, wallBMPData;
 
         protected override void OnLoad(EventArgs e)
         {
@@ -33,35 +37,40 @@ namespace ScratchPad
                 -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
                 +0.0f, -1.0f, 1.0f, 0.0f, 0.0f,
                 +0.0f, +0.0f, 1.0f, 1.0f, 0.0f,
-                +0.0f, +0.0f, 1.0f, 1.0f, 0.0f,
                 -1.0f, +0.0f, 0.0f, 1.0f, 0.0f,
-                -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
 
                 +0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
                 +1.0f, -1.0f, 1.0f, 0.0f, 0.0f,
                 +1.0f, +0.0f, 1.0f, 1.0f, 0.0f,
-                +1.0f, +0.0f, 1.0f, 1.0f, 0.0f,
                 +0.0f, +0.0f, 0.0f, 1.0f, 0.0f,
-                +0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
 
                 +0.0f, +0.0f, 0.0f, 0.0f, 1.0f,
                 +1.0f, +0.0f, 1.0f, 0.0f, 1.0f,
                 +1.0f, +1.0f, 1.0f, 1.0f, 1.0f,
-                +1.0f, +1.0f, 1.0f, 1.0f, 1.0f,
                 +0.0f, +1.0f, 0.0f, 1.0f, 1.0f,
-                +0.0f, +0.0f, 0.0f, 0.0f, 1.0f,
 
                 -1.0f, +0.0f, 0.0f, 0.0f, 1.0f,
                 +0.0f, +0.0f, 1.0f, 0.0f, 1.0f,
                 +0.0f, +1.0f, 1.0f, 1.0f, 1.0f,
-                +0.0f, +1.0f, 1.0f, 1.0f, 1.0f,
                 -1.0f, +1.0f, 0.0f, 1.0f, 1.0f,
-                -1.0f, +0.0f, 0.0f, 0.0f, 1.0f,
+            };
 
+            indexData = new int[]{
+                0,1,2,
+                2,3,0,
+
+                4,5,6,
+                6,7,4,
+
+                8,9,10,
+                10,11,8,
+
+                12,13,14,
+                14,15,12
             };
 
             Utilities.ShaderLoader.LoadShaders(out program, "vs.glsl", "fs.glsl");
-
+                    
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)
@@ -76,9 +85,9 @@ namespace ScratchPad
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
             int lastTileDrawn = 0;
-            for (int i = 4; i < 30 * 4; i += 30)
+            for (int i = 4; i < 20 * 4; i += 20)
             {
-                if (vertexData[i] == 0)
+               if (vertexData[i] == 0)
                 {
                     Utilities.TextureLoader.LoadTextures(out floorTexID, "floor.png");
                 }
@@ -86,9 +95,9 @@ namespace ScratchPad
                 {
                     Utilities.TextureLoader.LoadTextures(out wallTexID, "wall.jpg");
                 }
+
                 _Draw(vbo1, vertexData, lastTileDrawn);
                 lastTileDrawn++;
-
             }
 
             GL.Flush();
@@ -104,7 +113,12 @@ namespace ScratchPad
             GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(vertexData.Length * sizeof(float)), vertexData, BufferUsageHint.StaticDraw);
             GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
             GL.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 2 * sizeof(float));
-            GL.DrawArrays(PrimitiveType.Triangles, tileCount * 6, 6);            
+            int[] indices = new int[6];
+            for (int i = 0; i < 6; i++)
+            {
+                indices[i] = indexData[i + tileCount * 6];
+            }
+            GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, indices);
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
             GL.DisableVertexAttribArray(0);

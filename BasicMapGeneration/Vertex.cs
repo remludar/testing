@@ -10,6 +10,7 @@ namespace BasicMapGeneration
 {
     class Vertex
     {
+        public static int FLOATS_PER_VERTEX = 10;
 
         public struct Position
         {
@@ -31,11 +32,21 @@ namespace BasicMapGeneration
             }
         }
 
+        public struct TileType
+        {
+            public float type;
+            public void SetTileType(float newType)
+            {
+                type = newType;
+            }
+        }
+
         public Position pos;
         public Color col;
         public UV uv;
+        public TileType tile;
 
-        public Vertex(float newX, float newY)
+        public Vertex(float newX, float newY, float newType)
         {
             pos.x = newX;
             pos.y = newY;
@@ -45,6 +56,8 @@ namespace BasicMapGeneration
             col.g = 1.0f;
             col.b = 1.0f;
             col.a = 1.0f;
+
+            tile.type = newType;
         }
     }
 }

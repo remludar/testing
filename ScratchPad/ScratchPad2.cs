@@ -71,10 +71,10 @@ namespace ScratchPad
             base.OnRenderFrame(e);
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            Utilities.TextureLoader.LoadTextures(out floorTexID, "floor.png");
-            _Draw(vbo1, vertexData1, indexData1);
-            Utilities.TextureLoader.LoadTextures(out wallTexID, "wall.jpg");
-            _Draw(vbo2, vertexData2, indexData2);
+            //Utilities.TextureLoader.LoadTextures(out floorTexID, "floor.png");
+            //_Draw(vbo1, vertexData1, indexData1);
+            //Utilities.TextureLoader.LoadTextures(out wallTexID, "wall.jpg");
+            //_Draw(vbo2, vertexData2, indexData2);
 
             GL.Flush();
             SwapBuffers();

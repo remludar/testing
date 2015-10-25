@@ -10,11 +10,11 @@ namespace BasicMapGeneration
 {
     class Map
     {
-        const int WIDTH = 20;
+        const int WIDTH = 5;
         const int HEIGHT = 5;
 
         Tile[] tiles = new Tile[WIDTH * HEIGHT];
-        float[] vertData = new float[36 * (WIDTH * HEIGHT)];
+        float[] vertData = new float[Tile.VERTEX_COUNT * Vertex.FLOATS_PER_VERTEX * (WIDTH * HEIGHT)];
         int[] indexData = new int[6 * (WIDTH * HEIGHT)];
 
         public Map()
@@ -23,7 +23,11 @@ namespace BasicMapGeneration
             {
                 for (int row = 0; row < WIDTH; row++)
                 {
-                    tiles[row + col * WIDTH] = new Tile(row, col);
+                    if((row+col) % 2 == 0)
+                        tiles[row + col * WIDTH] = new Tile(row, col, 0);
+                    else
+                        tiles[row + col * WIDTH] = new Tile(row, col, 9);
+
                 }
             }
 
@@ -32,11 +36,11 @@ namespace BasicMapGeneration
 
         private void _ConvertVertexDataToFloats()
         {
-            var vertexDataBuffer = new float[36];
+            var vertexDataBuffer = new float[Tile.VERTEX_COUNT * Vertex.FLOATS_PER_VERTEX];
             for (int i = 0; i < tiles.Length; i++)
             {
                 vertexDataBuffer = tiles[i].GetFloats();
-                vertexDataBuffer.CopyTo(vertData, i * 36);
+                vertexDataBuffer.CopyTo(vertData, i * Tile.VERTEX_COUNT * Vertex.FLOATS_PER_VERTEX);
 
                 indexData[i * 6 + 0] = i * 4 + 0;
                 indexData[i * 6 + 1] = i * 4 + 1;

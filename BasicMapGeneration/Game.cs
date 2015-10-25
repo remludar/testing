@@ -18,11 +18,11 @@ namespace BasicMapGeneration
         float[] vertData;
         int[] indexData;
         Matrix4[] modelViewData;
-        int shaderProgramID, vertShaderID, fragShaderID, textureID;
-        int positionAttrib, colorAttrib, textureAttrib;
+        int shaderProgramID;
         int modelViewUniform;
+        int vao;
         int vertexVBO;
-        int indexVBO;
+        int floorTexID, wallTexID;
 
         Bitmap bmp;
         BitmapData bmpData;
@@ -37,9 +37,11 @@ namespace BasicMapGeneration
             GL.ClearColor(Color.CornflowerBlue);
             GL.Viewport(0, 0, ClientRectangle.Width, ClientRectangle.Height);
 
+            GL.GenBuffers(1, out vao);
+            GL.BindVertexArray(vao);
+
             _LoadData();
-            _LoadShaders();
-            _LoadTextures();
+            Utilities.ShaderLoader.LoadShaders(out shaderProgramID, @"Content\Shaders\vs.glsl", @"Content\Shaders\fs.glsl");
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)
@@ -48,9 +50,6 @@ namespace BasicMapGeneration
 
             _GetViewMatrix();
             _LoadUniforms();
-
-            _LoadBuffers();
-
             _ProcessInput();
         }
 
@@ -59,8 +58,21 @@ namespace BasicMapGeneration
             base.OnRenderFrame(e);
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            _DrawTriangles();
-
+            int lastTileDrawn = 0;
+            for (int i = 9; i < map.GetTileCount() * Vertex.FLOATS_PER_VERTEX * Tile.VERTEX_COUNT; i += Vertex.FLOATS_PER_VERTEX * Tile.VERTEX_COUNT)
+            {
+                if (vertData[i] == 0)
+                {
+                    Utilities.TextureLoader.LoadTextures(out floorTexID, @"Content\Textures\floor.png");
+                }
+                else
+                {
+                    Utilities.TextureLoader.LoadTextures(out wallTexID, @"Content\Textures\wall.jpg");
+                }
+                _DrawTriangles(vertexVBO, vertData, lastTileDrawn);
+                lastTileDrawn++;
+            }
+            GL.Flush();
             SwapBuffers();
         }
 
@@ -86,91 +98,15 @@ namespace BasicMapGeneration
 
         private void _LoadData()
         {
+            GL.GenBuffers(1, out vertexVBO);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vertexVBO);
+
             vertData = map.GetVertexData();
             indexData = map.GetIndexData();
 
             modelViewData = new Matrix4[]{
                 Matrix4.Identity
             };
-        }
-
-        private void _LoadShaders()
-        {
-            shaderProgramID = GL.CreateProgram();
-            _CreateShader(@"Content\Shaders\vs.glsl", ShaderType.VertexShader, out vertShaderID);
-            _CreateShader(@"Content\Shaders\fs.glsl", ShaderType.FragmentShader, out fragShaderID);
-            GL.AttachShader(shaderProgramID, vertShaderID);
-            GL.AttachShader(shaderProgramID, fragShaderID);
-            GL.LinkProgram(shaderProgramID);
-            Console.WriteLine(GL.GetProgramInfoLog(shaderProgramID));
-
-            positionAttrib = GL.GetAttribLocation(shaderProgramID, "position");
-            colorAttrib = GL.GetAttribLocation(shaderProgramID, "color");
-            textureAttrib = GL.GetAttribLocation(shaderProgramID, "texture");
-            modelViewUniform = GL.GetUniformLocation(shaderProgramID, "modelView");
-
-            if(positionAttrib == -1 || colorAttrib == -1 || textureAttrib == -1 || modelViewUniform == -1)
-            {
-                Console.WriteLine("Error binding attributes");
-                Console.WriteLine("positionAttrib: " + positionAttrib);
-                Console.WriteLine("colorAttrib: " + colorAttrib);
-                Console.WriteLine("textureAttrib: " + textureAttrib);
-                Console.WriteLine("modelView: " + modelViewUniform);
-            }
-        }
-
-        private void _CreateShader(string filePath, ShaderType type, out int id)
-        {
-            id = GL.CreateShader(type);
-            using (StreamReader reader = new StreamReader(filePath))
-            {
-                GL.ShaderSource(id, reader.ReadToEnd());
-            }
-            GL.CompileShader(id);
-            Console.WriteLine(GL.GetShaderInfoLog(id));
-        }
-
-        private void _LoadTextures()
-        {
-            textureID = GL.GenTexture();
-            GL.BindTexture(TextureTarget.Texture2D, textureID);
-
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-
-            bmp = new Bitmap(@"Content\Textures\Floor.png");
-            bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-
-            GL.TexImage2D(TextureTarget.Texture2D,
-               0,
-               PixelInternalFormat.Rgba,
-               bmpData.Width,
-               bmpData.Height,
-               0,
-               OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
-               PixelType.UnsignedByte,
-               bmpData.Scan0);
-
-            bmp.UnlockBits(bmpData);
-        }
-
-        private void _LoadBuffers()
-        {
-            GL.GenBuffers(1, out vertexVBO);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vertexVBO);
-
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(vertData.Length * sizeof(float)), vertData, BufferUsageHint.StaticDraw);
-            GL.VertexAttribPointer(positionAttrib, 3, VertexAttribPointerType.Float, false, sizeof(float) * 9, 0);
-            GL.VertexAttribPointer(colorAttrib, 4, VertexAttribPointerType.Float, false, sizeof(float) * 9, 3 * sizeof(float));
-            GL.VertexAttribPointer(textureAttrib, 2, VertexAttribPointerType.Float, false, sizeof(float) * 9, 7 * sizeof(float));
-
-            GL.GenBuffers(1, out indexVBO);
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexVBO);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indexData.Length * sizeof(float)), indexData, BufferUsageHint.StaticDraw);
-
-            GL.UseProgram(shaderProgramID);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
         }
 
         private void _LoadUniforms()
@@ -184,17 +120,30 @@ namespace BasicMapGeneration
             modelViewData[0][3, 3] = 3;
         }
 
-        private void _DrawTriangles()
+        private void _DrawTriangles(int vbo, float[] vertData, int tileCount)
         {
-            GL.EnableVertexAttribArray(positionAttrib);
-            GL.EnableVertexAttribArray(colorAttrib);
-            GL.EnableVertexAttribArray(textureAttrib);
+            GL.EnableVertexAttribArray(0);
+            GL.EnableVertexAttribArray(1);
+            GL.EnableVertexAttribArray(2);
 
-            GL.DrawElements(PrimitiveType.Triangles, indexData.Length, DrawElementsType.UnsignedInt, indexData);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(vertData.Length * sizeof(float)), vertData, BufferUsageHint.StaticDraw);
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, sizeof(float) * 10, 0);
+            GL.VertexAttribPointer(1, 4, VertexAttribPointerType.Float, false, sizeof(float) * 10, 3 * sizeof(float));
+            GL.VertexAttribPointer(2, 2, VertexAttribPointerType.Float, false, sizeof(float) * 10, 7 * sizeof(float));
+            int[] indices = new int[6];
+            for (int i = 0; i < 6; i++)
+            {
+                indices[i] = indexData[i + tileCount * 6];
+            }
 
-            GL.DisableVertexAttribArray(positionAttrib);
-            GL.DisableVertexAttribArray(colorAttrib);
-            GL.DisableVertexAttribArray(textureAttrib);
+            GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, indices);
+
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
+            GL.DisableVertexAttribArray(0);
+            GL.DisableVertexAttribArray(1);
+            GL.DisableVertexAttribArray(2);
         }
     }
 }
