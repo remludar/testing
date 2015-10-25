@@ -5,12 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 
 using OpenTK;
+using System.IO;
 
 namespace BasicMapGeneration
 {
     class Map
     {
-        const int WIDTH = 5;
+        const int WIDTH = 10;
         const int HEIGHT = 5;
 
         Tile[] tiles = new Tile[WIDTH * HEIGHT];
@@ -19,18 +20,7 @@ namespace BasicMapGeneration
 
         public Map()
         {
-            for (int col = 0; col < HEIGHT; col++)
-            {
-                for (int row = 0; row < WIDTH; row++)
-                {
-                    if((row+col) % 2 == 0)
-                        tiles[row + col * WIDTH] = new Tile(row, col, 0);
-                    else
-                        tiles[row + col * WIDTH] = new Tile(row, col, 9);
-
-                }
-            }
-
+            _ReadMapFromFile();
             _ConvertVertexDataToFloats();
         }
 
@@ -51,7 +41,34 @@ namespace BasicMapGeneration
             }
         }
 
+        private void _ReadMapFromFile()
+        {
+            using (StreamReader reader = new StreamReader(@"Content\Map.txt"))
+            {
+                List<float> tileArray = new List<float>();
+                while (!reader.EndOfStream)
+                {
+                    var tmpArray = reader.ReadLine().Split(',');
+                    for (int i = 0; i < tmpArray.Length; i++)
+                    {
+                        if (!tmpArray[i].Equals("\r\n"))
+                        {
+                            tileArray.Add(Convert.ToSingle(tmpArray[i]));
+                        }
+                    }
+                }
+                tileArray.Reverse();
+                for (int col = 0; col < HEIGHT; col++)
+                {
+                    for (int row = 0; row < WIDTH; row++)
+                    {
+                        tiles[row + col * WIDTH] = new Tile(row, col, tileArray[row + col * WIDTH]);
+                    }
+                }
 
+
+            }
+        }
 
         public float[] GetVertexData()
         {

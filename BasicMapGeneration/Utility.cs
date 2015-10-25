@@ -9,6 +9,7 @@ using OpenTK.Graphics.OpenGL;
 using System.IO;
 using System.Drawing;
 using System.Drawing.Imaging;
+using BasicMapGeneration;
 
 namespace Utilities
 {

@@ -65,33 +65,30 @@ namespace BasicMapGeneration
             {
                 if (vertData[i] == 0)
                 {
-                    GL.TexImage2D(TextureTarget.Texture2D,
-                       0,
-                       PixelInternalFormat.Rgba,
-                       floorBMPData.Width,
-                       floorBMPData.Height,
-                       0,
-                       OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
-                       PixelType.UnsignedByte,
-                       floorBMPData.Scan0);
+                    _UseTexture(wallBMPData);
                 }
                 else
                 {
-                    GL.TexImage2D(TextureTarget.Texture2D,
-                       0,
-                       PixelInternalFormat.Rgba,
-                       wallBMPData.Width,
-                       wallBMPData.Height,
-                       0,
-                       OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
-                       PixelType.UnsignedByte,
-                       wallBMPData.Scan0);
+                    _UseTexture(floorBMPData);
                 }
                 _DrawTriangles(vertexVBO, vertData, lastTileDrawn);
                 lastTileDrawn++;
             }
             GL.Flush();
             SwapBuffers();
+        }
+
+        private void _UseTexture(BitmapData bmpData)
+        {
+            GL.TexImage2D(TextureTarget.Texture2D,
+                      0,
+                      PixelInternalFormat.Rgba,
+                      bmpData.Width,
+                      bmpData.Height,
+                      0,
+                      OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
+                      PixelType.UnsignedByte,
+                      bmpData.Scan0);
         }
 
         private void _LoadTextures()
@@ -106,13 +103,13 @@ namespace BasicMapGeneration
             if (keyboardState[Key.Escape])
                 Exit();
             if(keyboardState[Key.D])
-                cam.Move(0.1f, 0f);
+                cam.Move(0.5f, 0f);
             if(keyboardState[Key.A])
-                cam.Move(-0.1f, 0f);
+                cam.Move(-0.5f, 0f);
             if(keyboardState[Key.W])
-                cam.Move(0f, 0.1f);
+                cam.Move(0f, 0.5f);
             if (keyboardState[Key.S])
-                cam.Move(0f, -0.1f);
+                cam.Move(0f, -0.5f);
             if (keyboardState[Key.Q])
             {
                 modelViewData[0][3, 0] = 1;
