@@ -17,12 +17,16 @@ namespace ScratchPad
     class ScratchPad : GameWindow
     {
         int program;
-        int vao, vbo1;
-        int floorTexID, wallTexID;
+        int vao, vbo;
+
+        int textureID;
+        int width = 2;
+        int height = 2;
+        int layerCount = 4;
+        int mipLevelCount = 2;
+        float[] texels;
+
         float[] vertexData;
-        int[] indexData;
-        Bitmap floorBMP, wallBMP;
-        BitmapData floorBMPData, wallBMPData;
 
         protected override void OnLoad(EventArgs e)
         {
@@ -32,44 +36,74 @@ namespace ScratchPad
             GL.GenBuffers(1, out vao);
             GL.BindVertexArray(vao);
 
-            GL.GenBuffers(1, out vbo1);
-            vertexData = new float[]{
-                -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-                +0.0f, -1.0f, 1.0f, 0.0f, 0.0f,
-                +0.0f, +0.0f, 1.0f, 1.0f, 0.0f,
-                -1.0f, +0.0f, 0.0f, 1.0f, 0.0f,
+            GL.GenBuffers(1, out vbo);
 
-                +0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-                +1.0f, -1.0f, 1.0f, 0.0f, 0.0f,
-                +1.0f, +0.0f, 1.0f, 1.0f, 0.0f,
-                +0.0f, +0.0f, 0.0f, 1.0f, 0.0f,
+            vertexData = new float[]
+            {
+                0.0f, 0.0f,     0.0f, 1.0f, 0.0f,
+                1.0f, 0.0f,     1.0f, 1.0f, 0.0f,
+                1.0f, 1.0f,     1.0f, 0.0f, 0.0f,                                            
+                1.0f, 1.0f,     1.0f, 0.0f, 0.0f,
+                0.0f, 1.0f,     0.0f, 0.0f, 0.0f,
+                0.0f, 0.0f,     0.0f, 1.0f, 0.0f,
 
-                +0.0f, +0.0f, 0.0f, 0.0f, 1.0f,
-                +1.0f, +0.0f, 1.0f, 0.0f, 1.0f,
-                +1.0f, +1.0f, 1.0f, 1.0f, 1.0f,
-                +0.0f, +1.0f, 0.0f, 1.0f, 1.0f,
-
-                -1.0f, +0.0f, 0.0f, 0.0f, 1.0f,
-                +0.0f, +0.0f, 1.0f, 0.0f, 1.0f,
-                +0.0f, +1.0f, 1.0f, 1.0f, 1.0f,
-                -1.0f, +1.0f, 0.0f, 1.0f, 1.0f,
+                0.0f, -1.0f,    0.0f, 1.0f, 2.0f,
+                1.0f, -1.0f,    1.0f, 1.0f, 2.0f,
+                1.0f, 0.0f,     1.0f, 0.0f, 2.0f,                                            
+                1.0f, 0.0f,     1.0f, 0.0f, 2.0f,
+                0.0f, 0.0f,     0.0f, 0.0f, 2.0f,
+                0.0f, -1.0f,    0.0f, 1.0f, 2.0f,
             };
 
-            indexData = new int[]{
-                0,1,2,
-                2,3,0,
-
-                4,5,6,
-                6,7,4,
-
-                8,9,10,
-                10,11,8,
-
-                12,13,14,
-                14,15,12
+            //Read you texels here. In the current example, we have 2*2*2 = 8 texels, with each texel being 4 GLubytes.
+            texels = new float[]
+            {
+                 //Texels for first image.
+                 1.0f, 0.0f, 0.0f, 0.0f,
+                 0.0f, 0.0f, 0.0f, 0.0f,
+                 0.0f, 0.0f, 0.0f, 0.0f,
+                 0.0f, 0.0f, 0.0f, 0.0f,
+                 //Texels for second image.
+                 1.0f, 0.0f, 0.0f, 0.0f,
+                 1.0f, 0.0f, 0.0f, 0.0f,
+                 0.0f, 0.0f, 0.0f, 0.0f,
+                 0.0f, 0.0f, 0.0f, 0.0f,
+                 //Texels for third image.
+                 0.0f, 0.0f, 0.0f, 0.0f,
+                 1.0f, 0.0f, 0.0f, 0.0f,
+                 1.0f, 0.0f, 1.0f, 0.0f,
+                 0.0f, 0.0f, 0.0f, 0.0f,
+                 //Texels for fourth image.
+                 1.0f, 0.0f, 0.0f, 0.0f,
+                 1.0f, 0.0f, 0.0f, 0.0f,
+                 1.0f, 0.0f, 0.0f, 0.0f,
+                 1.0f, 0.0f, 0.0f, 0.0f,
+                 
             };
 
-            Utilities.ShaderLoader.LoadShaders(out program, "vs.glsl", "fs.glsl");
+            GL.GenTextures(1, out textureID);
+            GL.BindTexture(TextureTarget.Texture2DArray, textureID);
+
+            //Allocate the storage.
+            //GL.TexStorage3D(TextureTarget3d.Texture2DArray, mipLevelCount, SizedInternalFormat.Rgba8, width, height, layerCount);
+            
+
+            //Upload pixel data.
+            //The first 0 refers to the mipmap level (level 0, since there's only 1)
+            //The following 2 zeroes refers to the x and y offsets in case you only want to specify a subrectangle.
+            //The final 0 refers to the layer index offset (we start from index 0 and have 2 levels).
+            //Altogether you can specify a 3D box subset of the overall texture, but only one mip level at a time.
+            //GL.TexSubImage3D(TextureTarget.Texture2DArray, 0, 0, 0, 0, width, height, layerCount, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.Float, texels);
+            
+            //Always set reasonable texture parameters
+
+            GL.TexParameter(TextureTarget.Texture2DArray, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+            GL.TexParameter(TextureTarget.Texture2DArray, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+            GL.TexParameter(TextureTarget.Texture2DArray, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
+            GL.TexParameter(TextureTarget.Texture2DArray, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
+            
+
+            Utilities.ShaderLoader.LoadShaders(out program, @"Content\Shaders\vs.glsl", @"Content\Shaders\fs.glsl");
                     
         }
 
@@ -84,27 +118,28 @@ namespace ScratchPad
             base.OnRenderFrame(e);
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            int lastTileDrawn = 0;
-            for (int i = 4; i < 20 * 4; i += 20)
-            {
-               if (vertexData[i] == 0)
-                {
-                    Utilities.TextureLoader.LoadTextures(out floorTexID, "floor.png");
-                }
-                else
-                {
-                    Utilities.TextureLoader.LoadTextures(out wallTexID, "wall.jpg");
-                }
-
-                _Draw(vbo1, vertexData, lastTileDrawn);
-                lastTileDrawn++;
-            }
+            //_DrawWithColor();
+            _DrawWithTexture();
 
             GL.Flush();
             SwapBuffers();
         }
 
-        private void _Draw(int vbo, float[] vertexData, int tileCount)
+        private void _DrawWithColor()
+        {
+            GL.EnableVertexAttribArray(0);
+
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(vertexData.Length * sizeof(float)), vertexData, BufferUsageHint.StaticDraw);
+            GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 0, 0);
+
+            GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
+
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            GL.DisableVertexAttribArray(0);
+        }
+
+        private void _DrawWithTexture()
         {
             GL.EnableVertexAttribArray(0);
             GL.EnableVertexAttribArray(1);
@@ -112,13 +147,9 @@ namespace ScratchPad
             GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
             GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(vertexData.Length * sizeof(float)), vertexData, BufferUsageHint.StaticDraw);
             GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
-            GL.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 2 * sizeof(float));
-            int[] indices = new int[6];
-            for (int i = 0; i < 6; i++)
-            {
-                indices[i] = indexData[i + tileCount * 6];
-            }
-            GL.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, indices);
+            GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 2 * sizeof(float));
+            GL.TexImage3D(TextureTarget.Texture2DArray, 0 , PixelInternalFormat.Rgba8, width, height, layerCount, 0, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.Float, texels);
+            GL.DrawArrays(PrimitiveType.Triangles, 0, 12);
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
             GL.DisableVertexAttribArray(0);
