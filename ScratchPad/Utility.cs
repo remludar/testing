@@ -69,16 +69,18 @@ namespace Utilities
             bmp.UnlockBits(bmpData);
         }
 
-        public static void LoadTextureAtlas(out int atlasID, string filePath, out Bitmap bmp, out BitmapData bmpData)
+        public static void LoadTextureAtlas(string filePath, out Bitmap bmp, out BitmapData bmpData)
         {
-            atlasID = GL.GenTexture();
-            GL.BindTexture(TextureTarget.Texture2D, atlasID);
-
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-
             bmp = new Bitmap(filePath);
             bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+        }
+
+        public static void LoadTexture(string filePath, out Bitmap bmp, out BitmapData bmpData)
+        {
+            bmp = new Bitmap(filePath);
+            bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
         }
     }
 }
