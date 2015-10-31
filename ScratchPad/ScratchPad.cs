@@ -23,8 +23,7 @@ namespace ScratchPad
         float[] vertexData;
 
         int floorTexID, wallTexID;
-        int width = 2;
-        int height = 2;
+        
         int layerCount = 2;
         int mipLevelCount = 1;
         float[] texels;
@@ -80,12 +79,12 @@ namespace ScratchPad
             vertexData = new float[]
             {
 
-                -1.0f, +0.0f,   +0.0f, +1.0f, +0.0f,
-                +0.0f, +0.0f,   +1.0f, +1.0f, +0.0f,
-                +0.0f, +1.0f,   +1.0f, +0.0f, +0.0f,                                            
-                +0.0f, +1.0f,   +1.0f, +0.0f, +0.0f,
-                -1.0f, +1.0f,   +0.0f, +0.0f, +0.0f,
-                -1.0f, +0.0f,   +0.0f, +1.0f, +0.0f,
+                -1.0f, +0.0f,   +0.0f, +1.0f, +1.0f,
+                +0.0f, +0.0f,   +1.0f, +1.0f, +1.0f,
+                +0.0f, +1.0f,   +1.0f, +0.0f, +1.0f,                                            
+                +0.0f, +1.0f,   +1.0f, +0.0f, +1.0f,
+                -1.0f, +1.0f,   +0.0f, +0.0f, +1.0f,
+                -1.0f, +0.0f,   +0.0f, +1.0f, +1.0f,
                                               
                 +0.0f, +0.0f,   +0.0f, +1.0f, +1.0f,
                 +1.0f, +0.0f,   +1.0f, +1.0f, +1.0f,
@@ -94,12 +93,12 @@ namespace ScratchPad
                 +0.0f, +1.0f,   +0.0f, +0.0f, +1.0f,
                 +0.0f, +0.0f,   +0.0f, +1.0f, +1.0f,
                 
-                -1.0f, -1.0f,   +0.0f, +1.0f, +1.0f,
-                +0.0f, -1.0f,   +1.0f, +1.0f, +1.0f,
-                +0.0f, +0.0f,   +1.0f, +0.0f, +1.0f,                                            
-                +0.0f, +0.0f,   +1.0f, +0.0f, +1.0f,
-                -1.0f, +0.0f,   +0.0f, +0.0f, +1.0f,
-                -1.0f, -1.0f,   +0.0f, +1.0f, +1.0f,
+                -1.0f, -1.0f,   +0.0f, +1.0f, +0.0f,
+                +0.0f, -1.0f,   +1.0f, +1.0f, +0.0f,
+                +0.0f, +0.0f,   +1.0f, +0.0f, +0.0f,                                            
+                +0.0f, +0.0f,   +1.0f, +0.0f, +0.0f,
+                -1.0f, +0.0f,   +0.0f, +0.0f, +0.0f,
+                -1.0f, -1.0f,   +0.0f, +1.0f, +0.0f,
               
                 +0.0f, -1.0f,   +0.0f, +1.0f, +0.0f,
                 +1.0f, -1.0f,   +1.0f, +1.0f, +0.0f,
@@ -112,6 +111,8 @@ namespace ScratchPad
         private void _LoadTexelData()
         {
             //Read you texels here. In the current example, we have 2*2*2 = 8 texels, with each texel being 4 GLubytes.
+            int width = 2;
+            int height = 2;
             texels = new float[]
             {
                  //Texels for first image.
@@ -140,36 +141,28 @@ namespace ScratchPad
         }
         private void _LoadTexelDataFromBitmap()
         {
-            //This code loads the whole bitmap
-            //Utilities.TextureLoader.LoadTextureAtlas(@"Content\Textures\SampleAtlas.png", out atlasBMP, out atlasBMPData);
-            //GL.TexImage3D(TextureTarget.Texture2DArray, 0, PixelInternalFormat.Rgba, atlasBMPData.Width, atlasBMPData.Height, 1, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, atlasBMPData.Scan0);
-
-            //Attempt to load 2 small bitmaps, convert to ubyte[], and render 
-            //Utilities.TextureLoader.LoadTexture(@"Content\Textures\floor.png", out floorBMP, out floorBMPData);
-            //GL.TexImage3D(TextureTarget.Texture2DArray, 0, PixelInternalFormat.Rgba8, floorBMPData.Width, floorBMPData.Height, 1, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, floorBMPData.Scan0);
-
-            //Utilities.TextureLoader.LoadTexture(@"Content\Textures\floor.png", out floorBMP, out floorBMPData);
-            //int bytes = floorBMPData.Stride * floorBMP.Height;
-            //byte[] floorBytes = new byte[bytes];
-            //Marshal.Copy(floorBMPData.Scan0, floorBytes, 0, bytes);
-            //GL.TexImage3D(TextureTarget.Texture2DArray, 0, PixelInternalFormat.Rgba8, floorBMPData.Width, floorBMPData.Height, layerCount, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, floorBytes);
-
             Utilities.TextureLoader.LoadTexture(@"Content\Textures\floor.png", out floorBMP, out floorBMPData);
             Utilities.TextureLoader.LoadTexture(@"Content\Textures\wall.jpg", out wallBMP, out wallBMPData);
             int floorbytes = (floorBMPData.Stride * floorBMP.Height);
             int wallbytes =(wallBMPData.Stride * wallBMP.Height);
-            int bytes = floorbytes + wallbytes;
-            byte[] texelBytes = new byte[floorbytes + wallbytes];
+            int bytes = (floorbytes + wallbytes);
+            byte[] texelBytes = new byte[bytes];
             Marshal.Copy(floorBMPData.Scan0, texelBytes, 0, floorbytes); 
             Marshal.Copy(wallBMPData.Scan0, texelBytes, floorbytes, wallbytes); 
             int textureWidth = floorBMPData.Width;
             int textureHeight = floorBMPData.Height;
             
-
-            GL.TexImage3D(TextureTarget.Texture2DArray, 0, PixelInternalFormat.Rgba8, textureWidth, textureHeight, layerCount, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, texelBytes);
-
-
-
+            GL.TexImage3D(TextureTarget.Texture2DArray, 
+                          0, 
+                          PixelInternalFormat.Rgba8, 
+                          textureWidth, 
+                          textureHeight, 
+                          layerCount, 
+                          0, 
+                          OpenTK.Graphics.OpenGL.PixelFormat.Bgra, 
+                          PixelType.UnsignedByte, 
+                          texelBytes
+                          );
         }
         private void _DrawWithTexture()
         {

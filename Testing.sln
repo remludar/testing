@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicMapGeneration", "Basic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScratchPad", "ScratchPad\ScratchPad.csproj", "{334653C9-8A7F-45EE-933C-6B57AF7C3953}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdvancedMapGeneration", "AdvancedMapGeneration\AdvancedMapGeneration.csproj", "{55B3B8C5-AE0A-4F49-9543-9826D3416FD2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{334653C9-8A7F-45EE-933C-6B57AF7C3953}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{334653C9-8A7F-45EE-933C-6B57AF7C3953}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{334653C9-8A7F-45EE-933C-6B57AF7C3953}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55B3B8C5-AE0A-4F49-9543-9826D3416FD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55B3B8C5-AE0A-4F49-9543-9826D3416FD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55B3B8C5-AE0A-4F49-9543-9826D3416FD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55B3B8C5-AE0A-4F49-9543-9826D3416FD2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
