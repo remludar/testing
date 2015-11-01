@@ -12,7 +12,7 @@ namespace BasicMapGeneration
         {
             using (Game game = new Game())
             {
-                game.Run(50, 60);
+                game.Run(60, 60);
             }
         }
     }

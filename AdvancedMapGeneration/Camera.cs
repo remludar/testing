@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using OpenTK;
+using OpenTK.Graphics.OpenGL;
 
 
 namespace BasicMapGeneration
@@ -13,12 +14,18 @@ namespace BasicMapGeneration
     {
         public Vector3 position = Vector3.Zero;
         public float moveSpeed = 0.09f;
+        public float zoomSpeed = 0.10f;
 
-        public Matrix4 GetViewMatrix()
+        int modelViewUniformLocation;
+        Matrix4 modelViewData;
+
+        float zoom = 3;
+
+        public Camera(int shaderProgramID)
         {
-            Vector3 lookAt = new Vector3(0, 0, -1);
 
-            return Matrix4.LookAt(position, position + lookAt, Vector3.UnitY);
+            modelViewUniformLocation = GL.GetUniformLocation(shaderProgramID, "modelView");
+            modelViewData = Matrix4.Identity;
         }
 
         public void Move(float x, float y)
@@ -36,8 +43,29 @@ namespace BasicMapGeneration
 
             position += offset;
 
-            Console.WriteLine(position);
         }
 
+        public void ZoomOut()
+        {
+            zoom += zoomSpeed;
+        }
+
+        public void ZoomIn()
+        {
+            zoom -= zoomSpeed;
+        }
+
+        public void Update()
+        {
+            GL.UniformMatrix4(modelViewUniformLocation, false, ref modelViewData);
+            Vector3 lookAt = new Vector3(0, 0, -1);
+            modelViewData = Matrix4.LookAt(position, position + lookAt, Vector3.UnitY);
+            modelViewData[3, 3] = zoom; //zoom
+
+            modelViewData[0, 0] *= 0.75f; //x aspect
+            modelViewData[1, 1] *= 1.0f; //y aspect
+
+
+        }
     }
 }
