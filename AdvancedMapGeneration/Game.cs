@@ -79,6 +79,9 @@ namespace BasicMapGeneration
             GL.ClearColor(Color.CornflowerBlue);
             GL.Viewport(0, 0, ClientRectangle.Width, ClientRectangle.Height);
 
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+
             GL.GenBuffers(1, out vao);
             GL.BindVertexArray(vao);
         }

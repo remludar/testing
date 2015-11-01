@@ -10,4 +10,5 @@ out vec4 OutputColor;
 void main()
 {
 	OutputColor = fragColor * texture(texSampler, fragTexCoord);
+
 }

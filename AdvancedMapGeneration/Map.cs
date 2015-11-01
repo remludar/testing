@@ -15,13 +15,13 @@ namespace BasicMapGeneration
 {
     class Map
     {
-        const int WIDTH = 10;
-        const int HEIGHT = 5;
+        const int WIDTH = 5;
+        const int HEIGHT = 3;
 
         int vertexVBO;
-        Bitmap floorBMP, wallBMP;
-        BitmapData floorBMPData, wallBMPData;
-        int textureCount = 2;
+        Bitmap grassMidBMP, grassMidTopBMP, grassLeftTopBMP, grassRightTopBMP, grassLeftMidBMP, grassRightMidBMP, grassMidBottomBMP, grassLeftBottomBMP, grassRightBottomBMP;
+        BitmapData grassMidBMPData, grassMidTopBMPData, grassLeftTopBMPData, grassRightTopBMPData, grassLeftMidBMPData, grassRightMidBMPData, grassMidBottomBMPData, grassLeftBottomBMPData, grassRightBottomBMPData;
+        int textureCount = 9;
 
         Tile[] tiles = new Tile[WIDTH * HEIGHT];
         float[] vertData = new float[Tile.VERTEX_COUNT * Vertex.FLOATS_PER_VERTEX * (WIDTH * HEIGHT)];
@@ -39,17 +39,39 @@ namespace BasicMapGeneration
             GL.GenBuffers(1, out vertexVBO);
             GL.BindBuffer(BufferTarget.ArrayBuffer, vertexVBO);
 
-            Utilities.TextureLoader.LoadTexture(@"Content\Textures\floor.png", out floorBMP, out floorBMPData);
-            Utilities.TextureLoader.LoadTexture(@"Content\Textures\wall.jpg", out wallBMP, out wallBMPData);
+            Utilities.TextureLoader.LoadTexture(@"Content\Textures\grass_mid.png", out grassMidBMP, out grassMidBMPData);
+            Utilities.TextureLoader.LoadTexture(@"Content\Textures\grass_top_mid.png", out grassMidTopBMP, out grassMidTopBMPData);
+            Utilities.TextureLoader.LoadTexture(@"Content\Textures\grass_top_left.png", out grassLeftTopBMP, out grassLeftTopBMPData);
+            Utilities.TextureLoader.LoadTexture(@"Content\Textures\grass_top_right.png", out grassRightTopBMP, out grassRightTopBMPData);
+            Utilities.TextureLoader.LoadTexture(@"Content\Textures\grass_mid_left.png", out grassLeftMidBMP, out grassLeftMidBMPData);
+            Utilities.TextureLoader.LoadTexture(@"Content\Textures\grass_mid_right.png", out grassRightMidBMP, out grassRightMidBMPData);
+            Utilities.TextureLoader.LoadTexture(@"Content\Textures\grass_bottom_mid.png", out grassMidBottomBMP, out grassMidBottomBMPData);
+            Utilities.TextureLoader.LoadTexture(@"Content\Textures\grass_bottom_left.png", out grassLeftBottomBMP, out grassLeftBottomBMPData);
+            Utilities.TextureLoader.LoadTexture(@"Content\Textures\grass_bottom_right.png", out grassRightBottomBMP, out grassRightBottomBMPData);
 
-            int floorbytes = (floorBMPData.Stride * floorBMP.Height);
-            int wallbytes = (wallBMPData.Stride * wallBMP.Height);
-            int bytes = (floorbytes + wallbytes);
+            int tile_0_Bytes = (grassMidBMPData.Stride * grassMidBMP.Height);
+            int tile_1_Bytes = (grassMidTopBMPData.Stride * grassMidTopBMP.Height);
+            int tile_2_Bytes = (grassLeftTopBMPData.Stride * grassLeftTopBMP.Height);
+            int tile_3_Bytes = (grassRightTopBMPData.Stride * grassRightTopBMP.Height);
+            int tile_4_Bytes = (grassLeftMidBMPData.Stride * grassLeftMidBMP.Height);
+            int tile_5_Bytes = (grassRightMidBMPData.Stride * grassRightMidBMP.Height);
+            int tile_6_Bytes = (grassMidBottomBMPData.Stride * grassMidBottomBMP.Height);
+            int tile_7_Bytes = (grassLeftBottomBMPData.Stride * grassLeftBottomBMP.Height);
+            int tile_8_Bytes = (grassRightBottomBMPData.Stride * grassRightBottomBMP.Height);
+
+            int bytes = (tile_0_Bytes + tile_1_Bytes + tile_2_Bytes + tile_3_Bytes + tile_4_Bytes + tile_5_Bytes + tile_6_Bytes + tile_7_Bytes + tile_8_Bytes);
             byte[] texelBytes = new byte[bytes];
-            Marshal.Copy(floorBMPData.Scan0, texelBytes, 0, floorbytes);
-            Marshal.Copy(wallBMPData.Scan0, texelBytes, floorbytes, wallbytes);
-            int textureWidth = floorBMPData.Width;
-            int textureHeight = floorBMPData.Height;
+            Marshal.Copy(grassMidBMPData.Scan0, texelBytes, 0, tile_0_Bytes);
+            Marshal.Copy(grassMidTopBMPData.Scan0, texelBytes, tile_0_Bytes, tile_1_Bytes);
+            Marshal.Copy(grassLeftTopBMPData.Scan0, texelBytes, tile_0_Bytes + tile_1_Bytes, tile_2_Bytes);
+            Marshal.Copy(grassRightTopBMPData.Scan0, texelBytes, tile_0_Bytes + tile_1_Bytes + tile_2_Bytes, tile_3_Bytes);
+            Marshal.Copy(grassLeftMidBMPData.Scan0, texelBytes, tile_0_Bytes + tile_1_Bytes + tile_2_Bytes + tile_3_Bytes, tile_4_Bytes);
+            Marshal.Copy(grassRightMidBMPData.Scan0, texelBytes, tile_0_Bytes + tile_1_Bytes + tile_2_Bytes + tile_3_Bytes + tile_4_Bytes, tile_5_Bytes);
+            Marshal.Copy(grassMidBottomBMPData.Scan0, texelBytes, tile_0_Bytes + tile_1_Bytes + tile_2_Bytes + tile_3_Bytes + tile_4_Bytes + tile_5_Bytes, tile_6_Bytes);
+            Marshal.Copy(grassLeftBottomBMPData.Scan0, texelBytes, tile_0_Bytes + tile_1_Bytes + tile_2_Bytes + tile_3_Bytes + tile_4_Bytes + tile_5_Bytes + tile_6_Bytes, tile_7_Bytes);
+            Marshal.Copy(grassRightBottomBMPData.Scan0, texelBytes, tile_0_Bytes + tile_1_Bytes + tile_2_Bytes + tile_3_Bytes + tile_4_Bytes + tile_5_Bytes + tile_6_Bytes + tile_7_Bytes, tile_8_Bytes);
+            int textureWidth = grassMidBMPData.Width;
+            int textureHeight = grassMidBMPData.Height;
 
             GL.TexImage3D(TextureTarget.Texture2DArray,
                           0,
