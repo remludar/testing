@@ -63,7 +63,6 @@ namespace Utilities
             bmp = new Bitmap(filePath);
             //bmp.MakeTransparent(Color.White);
             bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-
         }
     }
 }

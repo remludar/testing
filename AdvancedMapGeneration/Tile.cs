@@ -16,10 +16,10 @@ namespace BasicMapGeneration
 
         public Tile(float x, float y, float type)
         {
-            verts[0] = new Vertex(x, y, type);            verts[0].uv.SetUV(1.0f, 1.0f);
-            verts[1] = new Vertex(x, y + 1, type);        verts[1].uv.SetUV(1.0f, 0.0f);
-            verts[2] = new Vertex(x + 1, y + 1, type);    verts[2].uv.SetUV(0.0f, 0.0f);
-            verts[3] = new Vertex(x + 1, y, type);        verts[3].uv.SetUV(0.0f, 1.0f);
+            verts[0] = new Vertex(x, y, type);          verts[0].uv.SetUV(0,1);
+            verts[1] = new Vertex(x, y + 1, type);      verts[1].uv.SetUV(0,0);
+            verts[2] = new Vertex(x + 1, y + 1, type);  verts[2].uv.SetUV(1,0);
+            verts[3] = new Vertex(x + 1, y, type);      verts[3].uv.SetUV(1,1);
         }
 
         public float[] GetFloats()
