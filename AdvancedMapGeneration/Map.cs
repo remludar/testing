@@ -17,8 +17,8 @@ namespace BasicMapGeneration
     {
         const int WIDTH = 5;
         const int HEIGHT = 4;
-        const int TEXTURE_COUNT = 11;
-        const int LAYER_COUNT = 2;
+        const int TEXTURE_COUNT = 14;
+        const int LAYER_COUNT = 3;
         
 
         int vertexVBO;
@@ -53,7 +53,10 @@ namespace BasicMapGeneration
                 @"Content\Textures\grass_bottom_left.png",
                 @"Content\Textures\grass_bottom_mid.png", 
                 @"Content\Textures\grass_bottom_right.png",
-                @"Content\Textures\rocks.png"
+                @"Content\Textures\rocks.png",
+                @"Content\Textures\grass_mid_alt1.png",
+                @"Content\Textures\barrel_top.png",
+                @"Content\Textures\barrel_bottom.png"
             };
 
             //Read textures in and track the bytes.
@@ -99,54 +102,35 @@ namespace BasicMapGeneration
         private void _ReadMapFromFile()
         {
             int topDownModifier = HEIGHT - 1;
+            string[] layerPaths = new string[]{
+                @"Content\Map0.txt",
+                @"Content\Map1.txt",
+                @"Content\Map2.txt"
+            };
 
-            using (StreamReader reader = new StreamReader(@"Content\Map0.txt"))
+            for (int i = 0; i < LAYER_COUNT; i++)
             {
-                List<float> mapTileList = new List<float>();
-                while (!reader.EndOfStream)
+                using (StreamReader reader = new StreamReader(layerPaths[i]))
                 {
-                    var tmpArray = reader.ReadLine().Split(',');
-                    for (int i = 0; i < tmpArray.Length; i++)
+                    List<float> mapTileList = new List<float>();
+                    while (!reader.EndOfStream)
                     {
-                        if (!tmpArray[i].Equals("\r\n"))
+                        var tmpArray = reader.ReadLine().Split(',');
+                        for (int j = 0; j < tmpArray.Length; j++)
                         {
-                            mapTileList.Add(Convert.ToSingle(tmpArray[i]));
+                            if (!tmpArray[j].Equals("\r\n"))
+                            {
+                                mapTileList.Add(Convert.ToSingle(tmpArray[j]));
+                            }
                         }
                     }
-                }
 
-                
-                
-                for (int col = 0; col < HEIGHT; col++)
-                {
-                    for (int row = 0; row < WIDTH; row++)
+                    for (int col = 0; col < HEIGHT; col++)
                     {
-                        tiles[row + (col * WIDTH)] = new Tile(row, topDownModifier - col, mapTileList[row + (col * WIDTH)]);
-                    }
-                }
-            }
-
-            using (StreamReader reader = new StreamReader(@"Content\Map1.txt"))
-            {
-                List<float> mapTileList = new List<float>();
-                while (!reader.EndOfStream)
-                {
-                    var tmpArray = reader.ReadLine().Split(',');
-                    for (int i = 0; i < tmpArray.Length; i++)
-                    {
-                        if (!tmpArray[i].Equals("\r\n"))
+                        for (int row = 0; row < WIDTH; row++)
                         {
-                            mapTileList.Add(Convert.ToSingle(tmpArray[i]));
+                            tiles[row + (col * WIDTH) + (i * WIDTH * HEIGHT)] = new Tile(row, topDownModifier - col, mapTileList[row + (col * WIDTH)]);
                         }
-                    }
-                }
-
-
-                for (int col = 0; col < HEIGHT; col++)
-                {
-                    for (int row = 0; row < WIDTH; row++)
-                    {
-                        tiles[row + (col * WIDTH) + 20] = new Tile(row, topDownModifier - col, mapTileList[row + (col * WIDTH)]);
                     }
                 }
             }
