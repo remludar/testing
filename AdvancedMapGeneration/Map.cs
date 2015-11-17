@@ -16,7 +16,7 @@ namespace BasicMapGeneration
     class Map
     {
         const int WIDTH = 5;
-        const int HEIGHT = 3;
+        const int HEIGHT = 4;
         const int TEXTURE_COUNT = 10;
         
 
