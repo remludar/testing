@@ -15,10 +15,10 @@ namespace BasicMapGeneration
 {
     class Map
     {
-        const int WIDTH = 5;
-        const int HEIGHT = 4;
-        const int TEXTURE_COUNT = 14;
-        const int LAYER_COUNT = 3;
+        const int WIDTH = 10;
+        const int HEIGHT = 10;
+        const int TEXTURE_COUNT = 30;
+        const int LAYER_COUNT = 4;
         
 
         int vertexVBO;
@@ -43,20 +43,37 @@ namespace BasicMapGeneration
 
             //Texture file paths
             string[] paths = new string[]{
-                @"Content\Textures\blank.png",
-                @"Content\Textures\grass_top_left.png",
-                @"Content\Textures\grass_top_mid.png",
-                @"Content\Textures\grass_top_right.png",
-                @"Content\Textures\grass_mid_left.png",
-                @"Content\Textures\grass_mid.png", 
-                @"Content\Textures\grass_mid_right.png",
-                @"Content\Textures\grass_bottom_left.png",
-                @"Content\Textures\grass_bottom_mid.png", 
-                @"Content\Textures\grass_bottom_right.png",
-                @"Content\Textures\rocks.png",
-                @"Content\Textures\grass_mid_alt1.png",
-                @"Content\Textures\barrel_top.png",
-                @"Content\Textures\barrel_bottom.png"
+                @"Content\Textures\blank.png",                  //0
+                @"Content\Textures\grass_top_left.png",         //1
+                @"Content\Textures\grass_top_mid.png",          //2
+                @"Content\Textures\grass_top_right.png",        //3
+                @"Content\Textures\grass_mid_left.png",         //4
+                @"Content\Textures\grass_mid.png",              //5
+                @"Content\Textures\grass_mid_right.png",        //6
+                @"Content\Textures\grass_bottom_left.png",      //7
+                @"Content\Textures\grass_bottom_mid.png",       //8
+                @"Content\Textures\grass_bottom_right.png",     //9
+                @"Content\Textures\rock.png",                   //10
+                @"Content\Textures\grass_mid_alt1.png",         //11
+                @"Content\Textures\barrel_top.png",             //12
+                @"Content\Textures\barrel_bottom.png",          //13
+                @"Content\Textures\trunk1_top_mid.png",         //14
+                @"Content\Textures\trunk1_mid_left.png",        //15
+                @"Content\Textures\trunk1_mid_mid.png",         //16
+                @"Content\Textures\trunk1_mid_right.png",       //17
+                @"Content\Textures\trunk1_bottom_left.png",     //18
+                @"Content\Textures\trunk1_bottom_mid.png",      //19
+                @"Content\Textures\trunk1_bottom_right.png",    //20
+                @"Content\Textures\tree1_top_left.png",         //21
+                @"Content\Textures\tree1_top_mid.png",          //22
+                @"Content\Textures\tree1_top_right.png",        //23
+                @"Content\Textures\tree1_mid_left.png",         //24
+                @"Content\Textures\tree1_mid_mid.png",          //25
+                @"Content\Textures\tree1_mid_right.png",        //26
+                @"Content\Textures\tree1_bottom_left.png",      //27
+                @"Content\Textures\tree1_bottom_mid.png",       //28
+                @"Content\Textures\tree1_bottom_right.png",     //29
+
             };
 
             //Read textures in and track the bytes.
@@ -105,7 +122,8 @@ namespace BasicMapGeneration
             string[] layerPaths = new string[]{
                 @"Content\Map0.txt",
                 @"Content\Map1.txt",
-                @"Content\Map2.txt"
+                @"Content\Map2.txt",
+                @"Content\Map3.txt"
             };
 
             for (int i = 0; i < LAYER_COUNT; i++)

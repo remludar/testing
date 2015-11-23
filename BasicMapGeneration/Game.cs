@@ -113,7 +113,7 @@ namespace BasicMapGeneration
             if (keyboardState[Key.Q])
             {
                 modelViewData[0][3, 0] = 1;
-                Console.WriteLine(modelViewData[0][3,0]+"\n");
+                //Console.WriteLine(modelViewData[0][3,0]+"\n");
             }
         }
 

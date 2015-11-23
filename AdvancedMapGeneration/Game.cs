@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Input;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using OpenTK.Input;
 using System.Runtime.InteropServices;
 
 namespace BasicMapGeneration
@@ -21,6 +21,10 @@ namespace BasicMapGeneration
 
         Camera cam;
         Map map;
+
+        //temp variable area
+        Point mousePos;
+
 
         protected override void OnLoad(EventArgs e)
         {
@@ -41,6 +45,7 @@ namespace BasicMapGeneration
 
             cam.Update();
             _ProcessInput();
+            _DisplayMouseLocation();
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
@@ -67,10 +72,22 @@ namespace BasicMapGeneration
                 cam.Move(0f, 0.5f);
             if (keyboardState[Key.S])
                 cam.Move(0f, -0.5f);
-            if (keyboardState[Key.Q])
-                cam.ZoomIn();
             if (keyboardState[Key.E])
+                cam.ZoomIn();
+            if (keyboardState[Key.Q])
                 cam.ZoomOut();
+        }
+
+        private void _DisplayMouseLocation()
+        {
+            this.MouseMove += (object sender, MouseMoveEventArgs mouseEvent) =>
+            {
+                if (mousePos != mouseEvent.Position)
+                {
+                    mousePos = mouseEvent.Position;
+                    Console.WriteLine(mousePos);
+                }
+            };
         }
 
         private void _Init()

@@ -19,13 +19,14 @@ namespace BasicMapGeneration
         int modelViewUniformLocation;
         Matrix4 modelViewData;
 
-        float zoom = 3;
+        float zoom = 5;
 
         public Camera(int shaderProgramID)
         {
 
             modelViewUniformLocation = GL.GetUniformLocation(shaderProgramID, "modelView");
             modelViewData = Matrix4.Identity;
+            position = new Vector3(3.5f, 5, 0);
         }
 
         public void Move(float x, float y)
